@@ -4,8 +4,8 @@ import VideoSection from './components/VideoSection';
 import Footer from './components/Footer';
 
 function App() {
-  const [language, setLanguage] = useState('en');
   const [activeSection, setActiveSection] = useState('slideshow'); // 'slideshow' or 'video'
+  const [mode, setMode] = useState('presentation'); // 'presentation' or 'scripting'
 
   return (
     <div className="min-h-screen bg-[#0f1112] text-[#e9eef2]">
@@ -17,14 +17,30 @@ function App() {
               10 Things I Can't Live Without
             </h1>
             <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center md:justify-end">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="hidden px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] cursor-pointer text-sm sm:text-base"
-              >
-                <option value="en">English</option>
-                <option value="pt">Português</option>
-              </select>
+              {activeSection === 'slideshow' && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setMode('presentation')}
+                    className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
+                      mode === 'presentation'
+                        ? 'bg-[#ffcc66] text-[#0f1112]'
+                        : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
+                    }`}
+                  >
+                    Presentation
+                  </button>
+                  <button
+                    onClick={() => setMode('scripting')}
+                    className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
+                      mode === 'scripting'
+                        ? 'bg-[#ffcc66] text-[#0f1112]'
+                        : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
+                    }`}
+                  >
+                    Scripting
+                  </button>
+                </div>
+              )}
               <div className="flex gap-2">
                 <button
                   onClick={() => setActiveSection('slideshow')}
@@ -55,7 +71,7 @@ function App() {
       {/* Main Content */}
       <main className="pb-8">
         {activeSection === 'slideshow' ? (
-          <Slideshow language={language} />
+          <Slideshow mode={mode} />
         ) : (
           <VideoSection />
         )}

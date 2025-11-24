@@ -1,7 +1,6 @@
 const VideoSection = () => {
   // Extract video ID from YouTube URL
-  const videoId = 'fTGRpQs7Hck';
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?list=${videoId}`;
+  const embedUrl = `https://www.youtube.com/watch?v=YDcvkm3pAgE`;
 
   return (
     <section className="max-w-6xl mx-auto my-10 px-4 md:px-6">
