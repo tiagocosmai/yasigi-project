@@ -25,24 +25,10 @@ function App() {
       {/* Header */}
       <header className="max-w-6xl mx-auto px-4 md:px-6 pt-6 md:pt-10">
         <div className="bg-[#151718] rounded-xl shadow-2xl p-6 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-[#ffcc66]">
+          <div className="flex justify-center items-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-[#ffcc66] text-center">
               10 Things I Can't Live Without
             </h1>
-            <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center md:justify-end">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setActiveSection('slideshow')}
-                  className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
-                    activeSection === 'slideshow'
-                      ? 'bg-[#ffcc66] text-[#0f1112]'
-                      : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
-                  }`}
-                >
-                  Slideshow
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </header>

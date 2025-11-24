@@ -4,7 +4,7 @@ export const slidesData = {
       "s0": {
         "title": "Before I Start...",
         "body": "Before I start, I want to explain one decision I made.\n\nI chose not to include intangible things like family, my daughter, or my wife — nor specific tastes like food or drinks.\n\nThat doesn't mean they aren't important. But for this project, I wanted to focus on physical objects that are part of my daily life — things I use every day and that play an important role in my routine.",
-        "icon": ["intro-01.jpg","intro-02.jpg","intro-03.jpg","intro-04.jpg","intro-05.jpg"]
+        "icon": ["intro-01.jpg","intro-02.jpg","intro-03.jpg","intro-04.jpg","intro-05.jpg","intro-06.jpg"]
       },
       "s1": {
         "title": "Computer",
