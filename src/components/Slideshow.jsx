@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { slidesData } from '../data/slidesData';
 
-const Slideshow = ({ language = 'en', mode = 'presentation' }) => {
+const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const slideshowRef = useRef(null);
@@ -77,83 +77,87 @@ const Slideshow = ({ language = 'en', mode = 'presentation' }) => {
 
   // Presentation mode: only title and image(s)
   if (mode === 'presentation') {
+    // Calculate grid layout based on number of images
+    const getGridLayout = (count) => {
+      if (count === 1) return { cols: 1, rows: 1, special: null };
+      if (count === 2) return { cols: 2, rows: 1, special: null };
+      if (count === 3) return { cols: 3, rows: 1, special: null };
+      if (count === 4) return { cols: 2, rows: 2, special: null };
+      if (count === 5) return { cols: 3, rows: 2, special: 'five' }; // Special layout for 5
+      if (count === 6) return { cols: 3, rows: 2, special: null };
+      // For more than 6, use a flexible grid
+      return { cols: 3, rows: Math.ceil(count / 3), special: null };
+    };
+
+    const gridLayout = hasMultipleIcons ? getGridLayout(icons.length) : { cols: 1, rows: 1, special: null };
+
     return (
       <div
         ref={slideshowRef}
-        className={`bg-[#151718] rounded-xl shadow-2xl transition-all duration-300 ${
+        className={`bg-[#151718] rounded-xl shadow-2xl transition-all duration-300 flex flex-col ${
           isFullscreen
             ? 'fixed inset-0 z-50 rounded-none m-0 p-4 md:p-8'
             : 'max-w-6xl mx-auto my-10 p-6 md:p-8'
         }`}
+        style={isFullscreen ? { height: '100vh' } : { minHeight: 'calc(100vh - 200px)' }}
       >
-        <div className="flex flex-col items-center justify-center min-h-[500px] md:min-h-[600px]">
-          {/* Title */}
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#ffcc66] mb-6 md:mb-8 text-center">
-            {currentSlide.title}
-          </h2>
+        {/* Title */}
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#ffcc66] mb-6 md:mb-8 text-center flex-shrink-0">
+          {currentSlide.title}
+        </h2>
 
-          {/* Images - Collage if multiple, single large if one */}
-          <div className="w-full flex justify-center">
-            {hasMultipleIcons ? (
-              <div className="grid grid-cols-2 gap-2 md:gap-4 max-w-5xl w-full">
-                {icons.map((icon, idx) => {
-                  // Layout logic for different numbers of images
-                  let colSpan = 'col-span-1';
-                  let aspectClass = 'aspect-square';
-                  
-                  if (icons.length === 2) {
-                    colSpan = 'col-span-1';
-                    aspectClass = 'aspect-square';
-                  } else if (icons.length === 3) {
-                    if (idx === 0) {
-                      colSpan = 'col-span-2';
-                      aspectClass = 'aspect-[2/1]';
-                    } else {
-                      colSpan = 'col-span-1';
-                      aspectClass = 'aspect-square';
-                    }
-                  } else if (icons.length === 4) {
-                    colSpan = 'col-span-1';
-                    aspectClass = 'aspect-square';
-                  } else if (icons.length === 5) {
-                    if (idx === 0) {
-                      colSpan = 'col-span-2';
-                      aspectClass = 'aspect-[2/1]';
-                    } else {
-                      colSpan = 'col-span-1';
-                      aspectClass = 'aspect-square';
-                    }
+        {/* Images - Mosaic layout that fills available space */}
+        <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+          {hasMultipleIcons ? (
+            <div 
+              className="w-full h-full grid gap-2 md:gap-4"
+              style={{
+                gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
+                gridTemplateRows: `repeat(${gridLayout.rows}, 1fr)`,
+              }}
+            >
+              {icons.map((icon, idx) => {
+                // Special layout for 5 images: 3 on top row, 2 on bottom row
+                let gridArea = '';
+                if (gridLayout.special === 'five') {
+                  if (idx < 3) {
+                    // First 3 images on top row
+                    gridArea = `1 / ${idx + 1} / 2 / ${idx + 2}`;
                   } else {
-                    // For 6+ images, use a 3-column grid
-                    colSpan = 'col-span-1';
-                    aspectClass = 'aspect-square';
+                    // Last 2 images on bottom row, centered
+                    const bottomIdx = idx - 3;
+                    gridArea = `2 / ${bottomIdx + 2} / 3 / ${bottomIdx + 3}`;
                   }
-                  
-                  return (
-                    <div key={idx} className={colSpan}>
-                      <img
-                        src={`/new-icons/${icon}`}
-                        alt={`${currentSlide.title} - ${idx + 1}`}
-                        className={`w-full ${aspectClass} rounded-lg shadow-lg object-cover`}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="w-full max-w-5xl">
-                <img
-                  src={`/new-icons/${icons[0]}`}
-                  alt={currentSlide.title}
-                  className="w-full rounded-lg shadow-lg object-cover aspect-video"
-                />
-              </div>
-            )}
-          </div>
+                }
+                
+                return (
+                  <div 
+                    key={idx} 
+                    className="w-full h-full overflow-hidden"
+                    style={gridArea ? { gridArea } : {}}
+                  >
+                    <img
+                      src={`/new-icons/${icon}`}
+                      alt={`${currentSlide.title} - ${idx + 1}`}
+                      className="w-full h-full rounded-lg shadow-lg object-cover"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <img
+                src={`/new-icons/${icons[0]}`}
+                alt={currentSlide.title}
+                className="w-full h-full rounded-lg shadow-lg object-cover max-h-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Navigation Controls */}
-        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6">
+        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6 flex-shrink-0">
           <button
             onClick={handlePrev}
             className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
@@ -176,6 +180,14 @@ const Slideshow = ({ language = 'en', mode = 'presentation' }) => {
           >
             {isFullscreen ? '⤓ Exit' : '⤢ Fullscreen'}
           </button>
+          {onNavigateToVideo && (
+            <button
+              onClick={onNavigateToVideo}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            >
+              Video
+            </button>
+          )}
         </div>
 
         {/* Instructions */}
@@ -220,7 +232,7 @@ const Slideshow = ({ language = 'en', mode = 'presentation' }) => {
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6">
+      <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6 flex-shrink-0">
         <button
           onClick={handlePrev}
           className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
@@ -243,6 +255,14 @@ const Slideshow = ({ language = 'en', mode = 'presentation' }) => {
         >
           {isFullscreen ? '⤓ Exit' : '⤢ Fullscreen'}
         </button>
+        {onNavigateToVideo && (
+          <button
+            onClick={onNavigateToVideo}
+            className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+          >
+            Video
+          </button>
+        )}
       </div>
 
       {/* Instructions */}

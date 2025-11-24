@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Slideshow from './components/Slideshow';
 import VideoSection from './components/VideoSection';
 import Footer from './components/Footer';
@@ -6,6 +6,19 @@ import Footer from './components/Footer';
 function App() {
   const [activeSection, setActiveSection] = useState('slideshow'); // 'slideshow' or 'video'
   const [mode, setMode] = useState('presentation'); // 'presentation' or 'scripting'
+
+  // Keyboard shortcut: CTRL+SHIFT+B to toggle mode
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'B') {
+        e.preventDefault();
+        setMode((prev) => (prev === 'presentation' ? 'scripting' : 'presentation'));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0f1112] text-[#e9eef2]">
@@ -17,30 +30,6 @@ function App() {
               10 Things I Can't Live Without
             </h1>
             <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center md:justify-end">
-              {activeSection === 'slideshow' && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setMode('presentation')}
-                    className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
-                      mode === 'presentation'
-                        ? 'bg-[#ffcc66] text-[#0f1112]'
-                        : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
-                    }`}
-                  >
-                    Presentation
-                  </button>
-                  <button
-                    onClick={() => setMode('scripting')}
-                    className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
-                      mode === 'scripting'
-                        ? 'bg-[#ffcc66] text-[#0f1112]'
-                        : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
-                    }`}
-                  >
-                    Scripting
-                  </button>
-                </div>
-              )}
               <div className="flex gap-2">
                 <button
                   onClick={() => setActiveSection('slideshow')}
@@ -52,16 +41,6 @@ function App() {
                 >
                   Slideshow
                 </button>
-                <button
-                  onClick={() => setActiveSection('video')}
-                  className={`px-3 py-2 sm:px-4 rounded-lg border border-white/10 transition-colors text-sm sm:text-base ${
-                    activeSection === 'video'
-                      ? 'bg-[#ffcc66] text-[#0f1112]'
-                      : 'bg-transparent text-[#e9eef2] hover:bg-white/5'
-                  }`}
-                >
-                  Video
-                </button>
               </div>
             </div>
           </div>
@@ -71,7 +50,7 @@ function App() {
       {/* Main Content */}
       <main className="pb-8">
         {activeSection === 'slideshow' ? (
-          <Slideshow mode={mode} />
+          <Slideshow mode={mode} onNavigateToVideo={() => setActiveSection('video')} />
         ) : (
           <VideoSection />
         )}
