@@ -99,7 +99,7 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
             ? 'fixed inset-0 z-50 rounded-none m-0 p-4 md:p-8'
             : 'max-w-6xl mx-auto my-10 p-6 md:p-8'
         }`}
-        style={isFullscreen ? { height: '100vh' } : { minHeight: 'calc(100vh - 200px)' }}
+        style={isFullscreen ? { height: '100vh', maxHeight: '100vh' } : { height: 'calc(100vh - 120px)', maxHeight: 'calc(100vh - 120px)' }}
       >
         {/* Title */}
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#ffcc66] mb-6 md:mb-8 text-center flex-shrink-0">
@@ -107,13 +107,15 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
         </h2>
 
         {/* Images - Mosaic layout that fills available space */}
-        <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+        <div className="flex-1 w-full min-h-0 overflow-hidden" style={{ maxHeight: '100%' }}>
           {hasMultipleIcons ? (
             <div 
               className="w-full h-full grid gap-2 md:gap-4"
               style={{
                 gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
                 gridTemplateRows: `repeat(${gridLayout.rows}, 1fr)`,
+                height: '100%',
+                maxHeight: '100%',
               }}
             >
               {icons.map((icon, idx) => {
@@ -134,23 +136,23 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
                   <div 
                     key={idx} 
                     className="w-full h-full overflow-hidden"
-                    style={gridArea ? { gridArea } : {}}
+                    style={gridArea ? { gridArea, minHeight: 0 } : { minHeight: 0 }}
                   >
                     <img
                       src={`/new-icons/${icon}`}
                       alt={`${currentSlide.title} - ${idx + 1}`}
-                      className="w-full h-full rounded-lg shadow-lg object-cover"
+                      className="w-full h-full rounded-lg shadow-lg object-cover object-center"
                     />
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center overflow-hidden" style={{ maxHeight: '100%' }}>
               <img
                 src={`/new-icons/${icons[0]}`}
                 alt={currentSlide.title}
-                className="w-full h-full rounded-lg shadow-lg object-cover max-h-full"
+                className="w-full h-full rounded-lg shadow-lg object-cover object-center"
               />
             </div>
           )}
