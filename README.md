@@ -72,4 +72,3 @@ yasigi-project/
 - Change language using the dropdown selector
 
 
-
