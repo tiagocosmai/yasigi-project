@@ -90,6 +90,20 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
     };
 
     const gridLayout = hasMultipleIcons ? getGridLayout(icons.length) : { cols: 1, rows: 1, special: null };
+    
+    // Determine aspect ratio based on number of images
+    // 1, 4, 5, 6 images: 4:3 (landscape)
+    // 2, 3 images: 3:4 (portrait)
+    const getAspectRatio = (count) => {
+      if (count === 1 || count === 4 || count === 5 || count === 6) {
+        return '4/3'; // landscape
+      } else if (count === 2 || count === 3) {
+        return '3/4'; // portrait
+      }
+      return '4/3'; // default to landscape
+    };
+    
+    const aspectRatio = hasMultipleIcons ? getAspectRatio(icons.length) : '4/3';
 
     return (
       <div
@@ -107,13 +121,14 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
         </h2>
 
         {/* Images - Mosaic layout that fills available space */}
-        <div className="flex-1 w-full min-h-0 overflow-hidden" style={{ maxHeight: '100%' }}>
+        <div className="flex-1 w-full min-h-0 overflow-hidden flex items-center justify-center" style={{ maxHeight: '100%' }}>
           {hasMultipleIcons ? (
             <div 
               className="w-full h-full grid gap-2 md:gap-4"
               style={{
                 gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
-                gridTemplateRows: `repeat(${gridLayout.rows}, 1fr)`,
+                gridAutoRows: '1fr',
+                alignContent: 'center',
                 height: '100%',
                 maxHeight: '100%',
               }}
@@ -135,8 +150,8 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
                 return (
                   <div 
                     key={idx} 
-                    className="w-full h-full overflow-hidden"
-                    style={gridArea ? { gridArea, minHeight: 0 } : { minHeight: 0 }}
+                    className="w-full overflow-hidden"
+                    style={gridArea ? { gridArea, aspectRatio, maxHeight: '100%' } : { aspectRatio, maxHeight: '100%' }}
                   >
                     <img
                       src={`/new-icons/${icon}`}
@@ -148,7 +163,7 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
               })}
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center overflow-hidden" style={{ maxHeight: '100%' }}>
+            <div className="w-full h-full flex items-center justify-center overflow-hidden" style={{ maxHeight: '100%', aspectRatio: '4/3' }}>
               <img
                 src={`/new-icons/${icons[0]}`}
                 alt={currentSlide.title}
