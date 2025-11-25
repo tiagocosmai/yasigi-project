@@ -2,9 +2,9 @@ export const slidesData = {
   "en": {
     "slides": {
       "s0": {
-        "title": "Before I Start...",
-        "body": "Before I start, I want to explain one decision I made.\n\nI chose not to include intangible things like family, my daughter, or my wife — nor specific tastes like food or drinks.\n\nThat doesn't mean they aren't important. But for this project, I wanted to focus on physical objects that are part of my daily life — things I use every day and that play an important role in my routine.",
-        "icon": ["intro-01.jpg","intro-02.jpg","intro-03.jpg","intro-04.jpg","intro-05.jpg","intro-06.jpg"]
+        "title": "10 Things I Can't Live Without...",
+        "body": "",
+        "icon": []
       },
       "s1": {
         "title": "Computer",
@@ -60,6 +60,21 @@ export const slidesData = {
         "title": "Conclusion",
         "body": "Each of these items tells a story about who I am — my work, my hobbies, and the little moments that make life special.\n\nThey may be simple things, but they all represent comfort, passion, and a part of my everyday world.",
         "icon": ["conclusion.jpg"]
+      },
+      "s12": {
+        "title": "But......",
+        "body": "",
+        "icon": []
+      },
+      "s13": {
+        "title": "What's really matter??",
+        "body": "",
+        "icon": []
+      },
+      "s14": {
+        "title": "That's what matters!",
+        "body": "What really matters, what I can’t live without, is them.\n\nMy pets, my nephews(Duda, Lucca, Benny and Rapha), all my family, and especially my daughter Maria Alice and my wife Amanda!\n\nWithout them, life just doesn’t happen… there’s no work, no fun, no cool hobbies, no barbecue, nothing…",
+        "icon": ["intro-01.jpg","intro-02.jpg","intro-03.jpg","intro-04.jpg","intro-05.jpg"]
       }
     }
   }

@@ -73,7 +73,9 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
   const currentSlide = slides[currentIndex];
   // Get icons array - normalize to array format
   const icons = Array.isArray(currentSlide.icon) ? currentSlide.icon : [currentSlide.icon];
+  const hasIcons = icons.length > 0 && icons[0] !== '';
   const hasMultipleIcons = icons.length > 1;
+  const isTitleOnly = !hasIcons && (!currentSlide.body || currentSlide.body.trim() === '');
 
   // Presentation mode: only title and image(s)
   if (mode === 'presentation') {
@@ -104,6 +106,65 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
     };
     
     const aspectRatio = hasMultipleIcons ? getAspectRatio(icons.length) : '4/3';
+
+    // Title-only slide: show only centered title in large letters
+    if (isTitleOnly) {
+      return (
+        <div
+          ref={slideshowRef}
+          className={`bg-[#151718] rounded-xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center ${
+            isFullscreen
+              ? 'fixed inset-0 z-50 rounded-none m-0 p-4 md:p-8'
+              : 'max-w-6xl mx-auto my-10 p-6 md:p-8'
+          }`}
+          style={isFullscreen ? { height: '100vh', maxHeight: '100vh' } : { height: 'calc(100vh - 120px)', maxHeight: 'calc(100vh - 120px)' }}
+        >
+          {/* Title - Large and centered */}
+          <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#ffcc66] text-center">
+            {currentSlide.title}
+          </h2>
+
+          {/* Navigation Controls */}
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6 flex-shrink-0">
+            <button
+              onClick={handlePrev}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            >
+              ◀ Prev
+            </button>
+            <span className="text-xs sm:text-sm text-[#9aa4ad] px-2">
+              {currentIndex + 1} / {slides.length}
+            </span>
+            <button
+              onClick={handleNext}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            >
+              Next ▶
+            </button>
+            <button
+              onClick={toggleFullscreen}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+              title="Toggle Fullscreen (F)"
+            >
+              {isFullscreen ? '⤓ Exit' : '⤢ Fullscreen'}
+            </button>
+            {onNavigateToVideo && (
+              <button
+                onClick={onNavigateToVideo}
+                className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+              >
+                Video
+              </button>
+            )}
+          </div>
+
+          {/* Instructions */}
+          <div className="text-center mt-4 text-xs sm:text-sm text-[#9aa4ad] px-2">
+            Use arrow keys to navigate • Press F for fullscreen
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div
@@ -162,7 +223,7 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
                 );
               })}
             </div>
-          ) : (
+          ) : hasIcons ? (
             <div className="w-full h-full flex items-center justify-center overflow-hidden" style={{ maxHeight: '100%', aspectRatio: '4/3' }}>
               <img
                 src={`/new-icons/${icons[0]}`}
@@ -170,7 +231,7 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
                 className="w-full h-full rounded-lg shadow-lg object-cover object-center"
               />
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Navigation Controls */}
@@ -216,7 +277,66 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
   }
 
   // Scripting mode: original layout with title, image, and body text
-  const iconPath = icons[0];
+  // If title-only, show same layout as presentation mode
+  if (isTitleOnly) {
+    return (
+      <div
+        ref={slideshowRef}
+        className={`bg-[#151718] rounded-xl shadow-2xl transition-all duration-300 flex flex-col items-center justify-center ${
+          isFullscreen
+            ? 'fixed inset-0 z-50 rounded-none m-0 p-4 md:p-8'
+            : 'max-w-6xl mx-auto my-10 p-6 md:p-8'
+        }`}
+        style={isFullscreen ? { height: '100vh', maxHeight: '100vh' } : { height: 'calc(100vh - 120px)', maxHeight: 'calc(100vh - 120px)' }}
+      >
+        {/* Title - Large and centered */}
+        <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#ffcc66] text-center">
+          {currentSlide.title}
+        </h2>
+
+        {/* Navigation Controls */}
+        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6 flex-shrink-0">
+          <button
+            onClick={handlePrev}
+            className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+          >
+            ◀ Prev
+          </button>
+          <span className="text-xs sm:text-sm text-[#9aa4ad] px-2">
+            {currentIndex + 1} / {slides.length}
+          </span>
+          <button
+            onClick={handleNext}
+            className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+          >
+            Next ▶
+          </button>
+          <button
+            onClick={toggleFullscreen}
+            className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            title="Toggle Fullscreen (F)"
+          >
+            {isFullscreen ? '⤓ Exit' : '⤢ Fullscreen'}
+          </button>
+          {onNavigateToVideo && (
+            <button
+              onClick={onNavigateToVideo}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            >
+              Video
+            </button>
+          )}
+        </div>
+
+        {/* Instructions */}
+        <div className="text-center mt-4 text-xs sm:text-sm text-[#9aa4ad] px-2">
+          Use arrow keys to navigate • Press F for fullscreen
+        </div>
+      </div>
+    );
+  }
+
+  const iconPath = hasIcons ? icons[0] : '';
 
   return (
     <div
@@ -229,13 +349,15 @@ const Slideshow = ({ language = 'en', mode = 'presentation', onNavigateToVideo }
     >
       <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 items-start min-h-[420px]">
         {/* Image */}
-        <div className="flex-shrink-0 w-full md:w-auto md:flex-shrink-0">
-          <img
-            src={`/new-icons/${iconPath}`}
-            alt={currentSlide.title}
-            className="w-full md:w-[360px] rounded-lg shadow-lg object-cover"
-          />
-        </div>
+        {hasIcons && (
+          <div className="flex-shrink-0 w-full md:w-auto md:flex-shrink-0">
+            <img
+              src={`/new-icons/${iconPath}`}
+              alt={currentSlide.title}
+              className="w-full md:w-[360px] rounded-lg shadow-lg object-cover"
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 w-full">
