@@ -38,7 +38,7 @@ function App() {
         {activeSection === 'slideshow' ? (
           <Slideshow mode={mode} onNavigateToVideo={() => setActiveSection('video')} />
         ) : (
-          <VideoSection />
+          <VideoSection onNavigateToSlideshow={() => setActiveSection('slideshow')} />
         )}
       </main>
 

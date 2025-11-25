@@ -1,4 +1,4 @@
-const VideoSection = () => {
+const VideoSection = ({ onNavigateToSlideshow }) => {
   // Get video URL from environment variable, fallback to default if not set
   const videoUrl = import.meta.env.VITE_VIDEO_URL || 'https://www.youtube.com/embed/YDcvkm3pAgE?si=zc90sWUXVPDZ9KvJ';
 
@@ -21,6 +21,18 @@ const VideoSection = () => {
             className="rounded-lg w-full max-w-[560px] aspect-video"
           />
         </div>
+
+        {/* Navigation Controls */}
+        {onNavigateToSlideshow && (
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6">
+            <button
+              onClick={onNavigateToSlideshow}
+              className="px-3 py-2 sm:px-4 rounded-lg bg-transparent border border-white/10 text-[#e9eef2] hover:bg-white/5 transition-colors text-sm sm:text-base"
+            >
+              ← Slideshow
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
